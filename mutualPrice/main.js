@@ -2,7 +2,6 @@ const data = require('./getData.js');
 const ml = require('./ml.js');
 const dataSettings = require('./config.json');
 function main (priceDiff) {
-	debugger;
 	const listOfStocks = [];
 	const indicators = Object.keys(dataSettings.symbols).concat(dataSettings.possibleSymbols);
 	const x = priceDiff.filter((entry) => {
@@ -15,11 +14,10 @@ function main (priceDiff) {
 	});
 	const target = dataSettings.target;
 	const y = (priceDiff.filter((entry)=> entry[target]?true:false))[0][target];
-	
 	let loc = 0;
 	console.log(ml.linerRegression(x, y).map((i)=>{
 		let result = {};
-		result[listOfStocks[loc++]] = i[0]*100;
+		result[listOfStocks[loc++]] = i[0];
 		return result;
 	}));
 }
