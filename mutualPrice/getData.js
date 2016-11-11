@@ -1,9 +1,9 @@
 const request = require('request');
 const dataSettings = require("./config.json"); 
 const url = `${dataSettings.url}?q=select%20${dataSettings.selector}%20from%20yahoo.finance.%20historicaldata%20where%20symbol%20in%20(${Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols).map(symbol=>'"'+symbol+'"').join('%2C')})%20and%20startDate%20%3D%20"${dataSettings.startDate}"%20and%20endDate%20%3D%20"${dataSettings.endDate}"%0A%09%09&format=json&env=http%3A%2F%2Fdatatables.org%2Falltables.env&callback=`;
+const jsonQuery = require('json-query');
 
 function getData(url) {
-	debugger;
 	return new Promise ( function (resolve, reject) {
 		request(url, (error, response, body) => {
 			if (!error&response.statusCode == 200) {
@@ -20,15 +20,27 @@ function getData(url) {
 }	 
 
 function getPrices(data, symbols) {
-	const results = data.query.results.quote;
-	const resultMap = new Map();
-	for (let symbol of symbols) {
-		resultMap.set(symbol,[]); 
-	}
-	for (let stock of results ) {
-		resultMap.get(stock.Symbol).push(stock.Close);
-	}
-	return resultMap;
+	const helpers = {
+		select: function (input, ...toSelect) {
+	   		return input.map(s=> {
+				let obj = {};
+				for (let param of toSelect) {
+					obj[param]=s[param];
+				}
+				return obj;
+			});
+	 	},
+		map: function (input, key) {
+			return input.map(s=>{
+				let obj = {};
+				obj[s[key]]=s;
+				return obj;
+			});
+	  	}
+	};
+	const results = jsonQuery(dataSettings.jsonSelector,
+	{data: data, locals: helpers }).value;
+	return new Map(results);
 }
 
 function getDiff(prices) {

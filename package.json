@@ -1,0 +1,30 @@
+{
+  "name": "stock",
+  "version": "1.0.0",
+  "description": "estimating mutual fund price",
+  "main": "main.js",
+  "dependencies": {
+    "coffee": "^1.0.1",
+    "json-query": "^2.2.0",
+    "lineareg": "^0.0.1",
+    "lyric-node": "^0.1.0",
+    "request": "^2.76.0",
+    "simple-statistics": "^2.2.0",
+    "smr": "^0.12.5",
+    "sylvester": "^0.0.21"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abeadam/finance.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abeadam/finance/issues"
+  },
+  "homepage": "https://github.com/abeadam/finance"
+}
