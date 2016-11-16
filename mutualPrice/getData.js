@@ -36,10 +36,27 @@ function getPrices(data, symbols) {
 				obj[s[key]]=s;
 				return obj;
 			});
-	  	}
+	  	},
+		group: function (input, key) {
+			let groups = new Map();
+			input.forEach((data)=> {
+				let key = Object.keys(data)[0];
+				if (groups.has(key)) {
+					groups.get(key).add(data[key]);
+				} else {
+					groups.set(key, new Set([data[key]]));
+				}
+			});
+			let obj = {};
+			for (let [k,v] of groups) {
+				obj[k] = [...v];
+			}
+			return obj;
+		}
 	};
 	const results = jsonQuery(dataSettings.jsonSelector,
 	{data: data, locals: helpers }).value;
+	debugger;
 	return new Map(results);
 }
 

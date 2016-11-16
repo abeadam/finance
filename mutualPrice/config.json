@@ -5,7 +5,7 @@
 	"endDate": "today",
 	"indicators": "close",
 	"target":"IEFCX",
-	"jsonSelector":"query.results.quote:select(Symbol, Close, Date):map(Symbol)",
+	"jsonSelector":"query.results.quote:select(Symbol, Close, Date):map(Date):group(Data)",
 	"symbols":{
 		"PSX":1,
 		"PSK.TO":1.93,
