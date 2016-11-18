@@ -1,6 +1,11 @@
 const data = require('./getData.js');
 const ml = require('./ml.js');
 const dataSettings = require('./config.json');
+
+process.on('uncaughtException', (err) => {
+  console.log(err);
+});
+
 function main (priceDiff) {
 	const listOfStocks = [];
 	const indicators = Object.keys(dataSettings.symbols).concat(dataSettings.possibleSymbols);

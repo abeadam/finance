@@ -56,8 +56,32 @@ function getPrices(data, symbols) {
 	};
 	const results = jsonQuery(dataSettings.jsonSelector,
 	{data: data, locals: helpers }).value;
+	results[Symbol.iterator] = function * () {
+		let keys = Object.getOwnPropertyNames(results).sort((a,b)=>{
+			a = new Date(a);
+			b = new Date(b);
+			return a - b;
+		});
+		for ( let key of keys) {
+			yield {[key]:results[key]};
+		}
+	}
 	debugger;
-	return new Map(results);
+	return results;
+}
+
+function removeMissingDates(data, symbols) {
+	let filteredData = [];
+	debugger;
+	for (let [date, info] of data) {
+		let stocks = info.reduce((list, info) => list.push(info.Symbol), []);
+		let keepInfo = symbols.every((symbol)=>stocks.include(symbol));
+		if (keepInfo) {
+			filteredData.push({[date]: info});
+		}
+	}
+	debugger;
+	return filteredData;
 }
 
 function getDiff(prices) {
@@ -72,8 +96,6 @@ function getDiff(prices) {
 	return results;
 }
 
-let result = getData(url).then(result=>getPrices(result, Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols))).then(result=>filterResult(result));
-
 function filterResult (data) {
 	const target = dataSettings.target;
 	const differences = [...data.entries()].map(([key, value])=>{
@@ -83,4 +105,10 @@ function filterResult (data) {
 	});
 	return differences;
 }
+
+let result = getData(url)
+.then(result=>getPrices(result, Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols)))
+.then((data)=>removeMissingDates(data, dataSettings.symbols))
+.then(result=>filterResult(result));
+
 exports.priceDifferencePromise = result;
