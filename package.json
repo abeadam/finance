@@ -5,6 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "coffee": "^1.0.1",
+    "eslint-config-google": "^0.7.1",
     "json-query": "^2.2.0",
     "lineareg": "^0.0.1",
     "lyric-node": "^0.1.0",
@@ -13,7 +14,10 @@
     "smr": "^0.12.5",
     "sylvester": "^0.0.21"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^3.11.0",
+    "eslint-config-google": "^0.7.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
