@@ -19,25 +19,25 @@ function getData(url) {
 	});
 }	 
 
-function getPrices(data, symbols) {
+function getPrices(data) {
 	const helpers = {
 		select: function (input, ...toSelect) {
-	   		return input.map(s=> {
+			return input.map(s=> {
 				let obj = {};
 				for (let param of toSelect) {
 					obj[param]=s[param];
 				}
 				return obj;
 			});
-	 	},
+		},
 		map: function (input, key) {
 			return input.map(s=>{
 				let obj = {};
 				obj[s[key]]=s;
 				return obj;
 			});
-	  	},
-		group: function (input, key) {
+		},
+		group: function (input) {
 			let groups = new Map();
 			input.forEach((data)=> {
 				let key = Object.keys(data)[0];
@@ -63,52 +63,67 @@ function getPrices(data, symbols) {
 			return a - b;
 		});
 		for ( let key of keys) {
-			yield {[key]:results[key]};
+			yield [key, results[key]];
 		}
-	}
-	debugger;
-	return results;
+	};
+	return new Map(results);
 }
 
 function removeMissingDates(data, symbols) {
 	let filteredData = [];
-	debugger;
 	for (let [date, info] of data) {
-		let stocks = info.reduce((list, info) => list.push(info.Symbol), []);
-		let keepInfo = symbols.every((symbol)=>stocks.include(symbol));
+		let stocks = info.reduce((list, info) => { 
+			list.push(info.Symbol);
+			return list;
+		}, []);
+		let keepInfo = symbols.every(symbol=>stocks.includes(symbol));
 		if (keepInfo) {
 			filteredData.push({[date]: info});
-		}
+		} 	
 	}
-	debugger;
 	return filteredData;
 }
 
-function getDiff(prices) {
-	let results = [];
-	for (let loc = 1; loc < prices.length ; loc++) {
-		let diff = (Math.log(prices[loc-1])-Math.log(prices[loc]))*100;
-		if (diff === Infinity) {
-			throw new Error('stock with value null');
-		}
-		results.push(diff);
-	}
+function mapKeyToValues(data, symbols) {
+	let results = new Map();
+	symbols.forEach(symbol=>results.set(symbol,[]));
+	data.forEach(info=> {
+		const date = Object.keys(info)[0];
+		var {[date]: values} = info;
+		values.forEach(info => {
+			if (results.has(info.Symbol)) {
+				results.get(info.Symbol).push(info.Close);
+			}
+		});
+	});
 	return results;
 }
 
-function filterResult (data) {
-	const target = dataSettings.target;
-	const differences = [...data.entries()].map(([key, value])=>{
-		let result = {};
-		result[key]=getDiff(value);
-		return result;
+function mapDifferences (data) {
+	const differences = new Map();
+	function getDiff (prices) {
+		let results = [];
+		prices = prices.reverse();	
+		for (let loc = 1; loc < prices.length ; loc++) {
+			let diff = (Math.log(prices[loc-1])-Math.log(prices[loc]))*100;
+			if (diff === Infinity) {
+				throw new Error('stock with value null');
+			}
+			results.push(diff);
+		}
+		return results;
+	}	
+	data.forEach((value, key)=>{
+		differences.set(key, getDiff(value));
 	});
 	return differences;
 }
 
+const fullSymbolList = Object.getOwnPropertyNames(dataSettings.symbols).concat(dataSettings.extraSymbols); 
 let result = getData(url)
-.then(result=>getPrices(result, Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols)))
-.then((data)=>removeMissingDates(data, dataSettings.symbols))
-.then(result=>filterResult(result));
+.then(result=>getPrices(result, fullSymbolList))
+.then((data)=>removeMissingDates(data, fullSymbolList))
+.then(data=>mapKeyToValues(data, fullSymbolList))
+.then(result=>mapDifferences(result));
 
 exports.priceDifferencePromise = result;

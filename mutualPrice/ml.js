@@ -1,12 +1,11 @@
 const smr = require('smr');
 function runLinerRegression(x,y) {
-	var regression = new smr.Regression({ numX: x.length, numY: 1 });
-	let lastLength = x[0].length;
-	x.forEach((x)=>{ if (x.length!==lastLength){ throw Error('wrong length for some length')}});
-	for (let day = 0 ; day < x[0].length ; day++) {
-		let level = [];
-		x.forEach((stock)=>level.push(stock[day]));
-		regression.push({x:level, y:[y[day]]});	
+	let listLength = x[0].length;
+	x.forEach((x)=>{ if (x.length!==listLength){ throw Error('wrong length for some length')}});
+	if (x.length !== y.length) { throw Error('y and x have different length'); }
+	let regression = new smr.Regression({ numX: listLength, numY: 1 });
+	for (let day = 0 ; day < x.length ; day++) {
+		regression.push({x:x[day], y:[y[day]]});	
 	}
 	return regression.calculateCoefficients();
 }

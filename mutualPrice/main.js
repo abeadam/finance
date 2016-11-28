@@ -6,24 +6,30 @@ process.on('uncaughtException', (err) => {
   console.log(err);
 });
 
-function main (priceDiff) {
-	const listOfStocks = [];
-	const indicators = Object.keys(dataSettings.symbols).concat(dataSettings.possibleSymbols);
-	const x = priceDiff.filter((entry) => {
-		let keys = Object.keys(entry);
-		return indicators.includes(keys[0]);
-	}).map((entry)=> {
-		const keys = Object.keys(entry);
-		listOfStocks.push(keys[0]);
-		return entry[keys[0]];
+function getXValues(priceDiffMap, symbols) {
+	if (!priceDiffMap.size) {
+		throw new Error('Empty price map');
+	}
+	const length = [...priceDiffMap.values()][0].length;
+	const x = [];
+	for (let loc = 0 ; loc < length ; loc++) {
+		x.push([]);
+	}
+	priceDiffMap.forEach((value, key)=> {
+		if (symbols.includes(key)) {
+			value.forEach((price, loc) => x[loc].push(price));
+		}
 	});
+	return x;
+}
+
+function main (priceDiffMap) {
+	const symbols = Object.keys(dataSettings.symbols);
+	let x = getXValues(priceDiffMap, symbols);
 	const target = dataSettings.target;
-	const y = (priceDiff.filter((entry)=> entry[target]?true:false))[0][target];
-	let loc = 0;
-	console.log(ml.linerRegression(x, y).map((i)=>{
-		let result = {};
-		result[listOfStocks[loc++]] = i[0];
-		return result;
+	const y = priceDiffMap.get(target);
+	console.log(ml.linerRegression(x, y).map((value, key) => {
+		return {[symbols[key]]: value};
 	}));
 }
 data.priceDifferencePromise.then(main);

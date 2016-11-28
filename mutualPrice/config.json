@@ -1,7 +1,7 @@
 {
 	"url": "https://query.yahooapis.com/v1/public/yql",
 	"selector": "*",
-	"startDate": "2016-11-07",
+	"startDate": "2016-09-01",
 	"endDate": "today",
 	"indicators": "close",
 	"target":"IEFCX",
@@ -38,7 +38,6 @@
 	],
 	"extraSymbols":[
 		"IEFCX",
-		"USO",
-		"CL=F"
+		"USO" 
 	]
 }
