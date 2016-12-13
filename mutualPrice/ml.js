@@ -7,6 +7,10 @@ function runLinerRegression(x,y) {
 	for (let day = 0 ; day < x.length ; day++) {
 		regression.push({x:x[day], y:[y[day]]});	
 	}
-	return regression.calculateCoefficients();
+	const coef = regression.calculateCoefficients();
+	return {
+		coef: coef,
+		regression
+	}
 }
 exports.linerRegression = (x,y) => runLinerRegression(x,y);

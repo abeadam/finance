@@ -1,9 +1,10 @@
 const data = require('./getData.js');
 const ml = require('./ml.js');
 const dataSettings = require('./config.json');
+const Plot = require('./generatePlots.js').GeneratePlot;
 
 process.on('uncaughtException', (err) => {
-  console.log(err);
+	console.log(err);
 });
 
 function getXValues(priceDiffMap, symbols) {
@@ -28,8 +29,11 @@ function main (priceDiffMap) {
 	let x = getXValues(priceDiffMap, symbols);
 	const target = dataSettings.target;
 	const y = priceDiffMap.get(target);
-	console.log(ml.linerRegression(x, y).map((value, key) => {
+	const model = ml.linerRegression(x, y);
+	console.log(model.coef.map((value, key) => {
 		return {[symbols[key]]: value};
 	}));
+	console.log(model.regression.hypothesize({x :x[0]}));
+	(new Plot('stockData.dat', 'inputStockData.dat', ...x)).generatePlotFile();		
 }
 data.priceDifferencePromise.then(main);

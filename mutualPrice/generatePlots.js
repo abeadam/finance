@@ -1,5 +1,5 @@
 const fs = require('fs');
-class generatePlot {
+class GeneratePlot {
 	constructor (outputFileName, inputFileName, ...data) {
 		this.outputFileName = outputFileName;
 		this.inputFileName = inputFileName;
@@ -8,11 +8,12 @@ class generatePlot {
 
 	generatePlotFile() {
 		return new Promise((resolve, reject)=> {
+			const fileData = this.plotData.reduce((last, current) => {
+				last.push(current.join(','));
+				return last;
+			}, []);
 			fs.writeFile(this.outputFileName, 
-				this.plotData.reduce((last, current) => {
-					last.push(current.join(','));
-					return last;
-				}, []).join('\n'),
+				fileData.join('\n'),
 				"utf8",
 				(err) => {
 					if (err) {
@@ -23,4 +24,4 @@ class generatePlot {
 	}
 }
 
-exports = generatePlot;
+exports.GeneratePlot = GeneratePlot;
