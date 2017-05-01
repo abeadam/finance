@@ -1,6 +1,10 @@
 const request = require('request');
 const dataSettings = require("./config.json"); 
-const url = `${dataSettings.url}?q=select%20${dataSettings.selector}%20from%20yahoo.finance.%20historicaldata%20where%20symbol%20in%20(${Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols).map(symbol=>'"'+symbol+'"').join('%2C')})%20and%20startDate%20%3D%20"${dataSettings.startDate}"%20and%20endDate%20%3D%20"${dataSettings.endDate}"%0A%09%09&format=json&env=http%3A%2F%2Fdatatables.org%2Falltables.env&callback=`;
+//const url = `https://${dataSettings.url}?q=select%20${dataSettings.selector}%20from%20yahoo.finance.%20historicaldata%20where%20symbol%20in%20(${Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols).map(symbol=>'"'+symbol+'"').join('%2C')})%20and%20startDate%20%3D%20"${dataSettings.startDate}"%20and%20endDate%20%3D%20"${dataSettings.endDate}"%0A%09%09&format=json&env=http%3A%2F%2Fdatatables.org%2Falltables.env&callback=`;
+const selectStr = `select ${dataSettings.selector} from yahoo.finance.historicaldata where symbol in (${Object.keys(dataSettings.symbols).concat(dataSettings.extraSymbols).map(symbol=>'"'+symbol+'"').join(',')})and startDate = "${dataSettings.startDate}" and endDate = "${dataSettings.endDate}"`;
+const encodedSelectStr = encodeURIComponent(selectStr);
+const unencodedUrl = `${dataSettings.url}?q=${encodedSelectStr}&format=json&diagnostics=true&env=store://datatables.org/alltableswithkeys`;
+const url = `https://${unencodedUrl}`;
 const jsonQuery = require('json-query');
 
 function getData(url) {
@@ -20,6 +24,7 @@ function getData(url) {
 }	 
 
 function getPrices(data) {
+	debugger;
 	const helpers = {
 		select: function (input, ...toSelect) {
 			return input.map(s=> {
@@ -86,9 +91,11 @@ function removeMissingDates(data, symbols) {
 
 function mapKeyToValues(data, symbols) {
 	let results = new Map();
+	const dates = [];
 	symbols.forEach(symbol=>results.set(symbol,[]));
 	data.forEach(info=> {
 		const date = Object.keys(info)[0];
+		dates.push(date);
 		var {[date]: values} = info;
 		values.forEach(info => {
 			if (results.has(info.Symbol)) {
@@ -96,7 +103,7 @@ function mapKeyToValues(data, symbols) {
 			}
 		});
 	});
-	return results;
+	return [dates, results];
 }
 
 function mapDifferences (data) {
@@ -124,6 +131,11 @@ let result = getData(url)
 .then(result=>getPrices(result, fullSymbolList))
 .then((data)=>removeMissingDates(data, fullSymbolList))
 .then(data=>mapKeyToValues(data, fullSymbolList))
-.then(result=>mapDifferences(result));
+.then(([dates, result])=>{
+	dates.pop();
+	dates.reverse();
+	return [dates, mapDifferences(result)];
+})
+.catch(e => console.error(e));
 
 exports.priceDifferencePromise = result;

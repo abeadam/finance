@@ -24,7 +24,7 @@ function getXValues(priceDiffMap, symbols) {
 	return x;
 }
 
-function main (priceDiffMap) {
+function main ([dates, priceDiffMap]) {
 	const symbols = Object.keys(dataSettings.symbols);
 	let x = getXValues(priceDiffMap, symbols);
 	const target = dataSettings.target;
@@ -34,6 +34,8 @@ function main (priceDiffMap) {
 		return {[symbols[key]]: value};
 	}));
 	console.log(model.regression.hypothesize({x :x[0]}));
-	(new Plot('stockData.dat', 'inputStockData.dat', ...x)).generatePlotFile();		
+	const plotter = new Plot('stockData.dat', dates, priceDiffMap);
+	plotter.generatePlotFile();
+	plotter.generatePlotData();	
 }
 data.priceDifferencePromise.then(main);
