@@ -5,13 +5,14 @@ const selectStr = `select ${dataSettings.selector} from yahoo.finance.historical
 const encodedSelectStr = encodeURIComponent(selectStr);
 const unencodedUrl = `${dataSettings.url}?q=${encodedSelectStr}&format=json&diagnostics=true&env=store://datatables.org/alltableswithkeys`;
 const url = `https://${unencodedUrl}`;
+const liveUpdateUrl = `${dataSettings.liveUpdateUrl}${Object.keys(dataSettings.symbols).map(stock=>dataSettings.liveConv[stock]?dataSettings.liveConv[stock]:stock).join(',')}`;
 const jsonQuery = require('json-query');
 
-function getData(url) {
+function getData(url, preParseFn=d=>d) {
 	return new Promise ( function (resolve, reject) {
 		request(url, (error, response, body) => {
 			if (!error&response.statusCode == 200) {
-				resolve(JSON.parse(body));
+				resolve(JSON.parse(preParseFn(body)));
 			} else {
 				if (error) {
 					reject(error);
@@ -23,8 +24,23 @@ function getData(url) {
 	});
 }	 
 
+function getLiveUpdate() {
+	return	getData(liveUpdateUrl,data=>data.substr(4))
+		.then((result)=> {
+			const liveResult = new Map();
+			const changes = [];
+			result.forEach((data) => {
+				let symbol = data.t;
+				let change = parseFloat(data.cp);	
+				liveResult.set(symbol,change);
+				changes.push(change);
+			});
+			return { liveResult, changes };
+		});
+	
+}
+
 function getPrices(data) {
-	debugger;
 	const helpers = {
 		select: function (input, ...toSelect) {
 			return input.map(s=> {
@@ -139,3 +155,4 @@ let result = getData(url)
 .catch(e => console.error(e));
 
 exports.priceDifferencePromise = result;
+exports.getLiveData = getLiveUpdate;

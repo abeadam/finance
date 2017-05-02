@@ -1,11 +1,15 @@
 {
 	"url": "query.yahooapis.com/v1/public/yql",
+	"liveUpdateUrl": "https://www.google.com/finance/info?q=",
 	"selector": "*",
 	"startDate": "2017-3-15",
 	"endDate": "today",
 	"indicators": "close",
 	"target":"IEFCX",
 	"jsonSelector":"query.results.quote:select(Symbol, Close, Date):map(Date):group(Data)",
+	"liveConv": {
+		"NBL":"NYSE:NBL"
+	},
 	"symbols": {
 		"XOP": 1,
 		"IEO": 1,

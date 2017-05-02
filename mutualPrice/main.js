@@ -34,6 +34,9 @@ function main ([dates, priceDiffMap]) {
 		return {[symbols[key]]: value};
 	}));
 	console.log(model.regression.hypothesize({x :x[0]}));
+	data.getLiveData().then(result=>{
+		console.log("prediction:",model.regression.hypothesize({x: result.changes}));
+	});
 	const plotter = new Plot('stockData.dat', dates, priceDiffMap);
 	plotter.generatePlotFile();
 	plotter.generatePlotData();	

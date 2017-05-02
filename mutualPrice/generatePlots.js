@@ -13,7 +13,6 @@ class GeneratePlot {
 	}
 
 	generatePlotFile() {
-		debugger;
 		const plotFile = template.templateFunctions.generateTemplate([...this.keys], this.outputFileName);
 		return new Promise ((resolve,reject)=> {
 			fs.writeFile('plot.plg',
