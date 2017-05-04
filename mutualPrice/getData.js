@@ -41,6 +41,7 @@ function getLiveUpdate() {
 }
 
 function getPrices(data) {
+	debugger;
 	const helpers = {
 		select: function (input, ...toSelect) {
 			return input.map(s=> {

@@ -2,7 +2,7 @@
 	"url": "query.yahooapis.com/v1/public/yql",
 	"liveUpdateUrl": "https://www.google.com/finance/info?q=",
 	"selector": "*",
-	"startDate": "2017-3-15",
+	"startDate": "2017-3-29",
 	"endDate": "today",
 	"indicators": "close",
 	"target":"IEFCX",
@@ -25,7 +25,10 @@
 		"BP": 1,
 		"CVX": 1,
 		"RDS-A": 1,
-		"SPY": 1
+		"SPY": 1,
+		"PSK.TO": 1,
+		"OXY" : 1,
+		"HES" : 1
 	},
 	"i_symbols":{
 		"TDW":1,
