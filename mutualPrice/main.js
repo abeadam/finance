@@ -21,6 +21,8 @@ function getXValues(priceDiffMap, symbols) {
 			value.forEach((price, loc) => x[loc].push(price));
 		}
 	});
+	// Add 1 to all the x's for the x intercept
+	
 	return x;
 }
 
@@ -35,10 +37,16 @@ function main ([dates, priceDiffMap]) {
 	}));
 	console.log(model.regression.hypothesize({x :x[0]}));
 	data.getLiveData().then(result=>{
-		console.log("prediction:",model.regression.hypothesize({x: result.changes}));
+		console.log("prediction:",model.regression.hypothesize({x:result.changes}));
 	});
 	const plotter = new Plot('stockData.dat', dates, priceDiffMap);
-	plotter.generatePlotFile();
-	plotter.generatePlotData();	
+	Promise.all(
+		[plotter.generatePlotFile(),
+		plotter.generatePlotData()])
+	.then(()=> {
+		plotter.generatePlotChart();
+	}).catch((err)=>{
+		console.error(err)
+	});
 }
 data.priceDifferencePromise.then(main);

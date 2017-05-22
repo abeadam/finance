@@ -6,6 +6,7 @@
   "dependencies": {
     "coffee": "^1.0.1",
     "eslint-config-google": "^0.7.1",
+    "express": "^4.15.2",
     "json-query": "^2.2.0",
     "lineareg": "^0.0.1",
     "lyric-node": "^0.1.0",

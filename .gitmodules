@@ -1,0 +1,3 @@
+[submodule "machineJS"]
+	path = machineJS
+	url = https://github.com/ClimbsRocks/machineJS.git

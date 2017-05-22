@@ -1,5 +1,5 @@
-set terminal png
-	set output "chart.png"
+set terminal svg
+	set output "charts/svg/allValues.svg"
 	set timefmt '%Y-%m-%d'
 	set xdata time
 	plot "stockData.dat" using 1:2 with lines title "XOP" ,"stockData.dat" using 1:3 with lines title "IEO" ,"stockData.dat" using 1:4 with lines title "PXE" ,"stockData.dat" using 1:5 with lines title "UGA" ,"stockData.dat" using 1:6 with lines title "UNG" ,"stockData.dat" using 1:7 with lines title "USO" ,"stockData.dat" using 1:8 with lines title "XLE" ,"stockData.dat" using 1:9 with lines title "SU" ,"stockData.dat" using 1:10 with lines title "CNQ" ,"stockData.dat" using 1:11 with lines title "NBL" ,"stockData.dat" using 1:12 with lines title "DVN" ,"stockData.dat" using 1:13 with lines title "BP" ,"stockData.dat" using 1:14 with lines title "CVX" ,"stockData.dat" using 1:15 with lines title "RDS-A" ,"stockData.dat" using 1:16 with lines title "SPY" ,"stockData.dat" using 1:17 with lines title "PSK.TO" ,"stockData.dat" using 1:18 with lines title "OXY" ,"stockData.dat" using 1:19 with lines title "HES" ,"stockData.dat" using 1:20 with lines title "IEFCX" 

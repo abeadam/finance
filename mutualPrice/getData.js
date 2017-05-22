@@ -7,7 +7,6 @@ const unencodedUrl = `${dataSettings.url}?q=${encodedSelectStr}&format=json&diag
 const url = `https://${unencodedUrl}`;
 const liveUpdateUrl = `${dataSettings.liveUpdateUrl}${Object.keys(dataSettings.symbols).map(stock=>dataSettings.liveConv[stock]?dataSettings.liveConv[stock]:stock).join(',')}`;
 const jsonQuery = require('json-query');
-
 function getData(url, preParseFn=d=>d) {
 	return new Promise ( function (resolve, reject) {
 		request(url, (error, response, body) => {
@@ -41,7 +40,6 @@ function getLiveUpdate() {
 }
 
 function getPrices(data) {
-	debugger;
 	const helpers = {
 		select: function (input, ...toSelect) {
 			return input.map(s=> {

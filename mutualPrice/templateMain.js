@@ -4,8 +4,8 @@ function generateTemplate(legend, dataFile) {
 		last.push(oneSeries);	
 		return last;
 	}, []).join(',');
-	const template = `set terminal png
-	set output "chart.png"
+	const template = `set terminal svg
+	set output "charts/svg/allValues.svg"
 	set timefmt '%Y-%m-%d'
 	set xdata time
 	plot ${titles}`

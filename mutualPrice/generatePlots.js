@@ -1,5 +1,7 @@
 const fs = require('fs');
 const template = require('./templateMain');
+const exec = require('child_process').exec;
+const plotFileName = 'plot.plg';
 class GeneratePlot {
 	constructor (outputFileName, dates, priceMap) {
 		this.keys = priceMap.keys();
@@ -12,10 +14,23 @@ class GeneratePlot {
 		}
 	}
 
+	generatePlotChart() {
+		debugger;
+		return new Promise ((resolve, reject) => {
+			exec(`gnuplot ${plotFileName}`, (err, stdout) =>{
+				if (err) {
+					reject(err);
+					return;
+				}
+				resolve(stdout);
+			});
+		});
+	}
+
 	generatePlotFile() {
 		const plotFile = template.templateFunctions.generateTemplate([...this.keys], this.outputFileName);
 		return new Promise ((resolve,reject)=> {
-			fs.writeFile('plot.plg',
+			fs.writeFile(plotFileName,
 					plotFile,
 					"utf8",
 					 (err) => {

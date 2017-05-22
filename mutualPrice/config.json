@@ -2,7 +2,7 @@
 	"url": "query.yahooapis.com/v1/public/yql",
 	"liveUpdateUrl": "https://www.google.com/finance/info?q=",
 	"selector": "*",
-	"startDate": "2017-3-29",
+	"startDate": "2017-04-10",
 	"endDate": "today",
 	"indicators": "close",
 	"target":"IEFCX",
